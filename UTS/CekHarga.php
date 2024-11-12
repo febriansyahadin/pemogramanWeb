@@ -9,6 +9,7 @@ $hargaKamar = [
 ];
 
 
+
 $diskonTersedia = [
     'tidak-ada' => 0,
     'member' => 0.10, 
@@ -23,7 +24,6 @@ define('MAX_HARI', 30);
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $lantai = filter_input(INPUT_POST, 'lantai', FILTER_VALIDATE_INT);
     $jumlahHari = filter_input(INPUT_POST, 'jumlahHari', FILTER_VALIDATE_INT);
-    
 
     if ($lantai === false || $lantai < 1) {
         $error = 'Lantai harus berupa angka positif';
@@ -39,27 +39,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         $hargaDasar = $hargaKamar[$tipe] * $jumlahHari;
         
-        
+        $hargadiskon = 0;
+      
         if ($lantai > 5) {
             $hargaDasar += 50000;
         }
-        
+
+        if ($lantai > 5 && $jumlahHari > 3) {
+            $hargadiskon = $hargaDasar * 0.10;
+            $hargaDasar -= $hargadiskon;
+        }
+
         $totalTransaksi = $hargaDasar;
 
-     
+
+    
         $totalHarga = $hargaDasar;
         if ($diskon === 'member') {
             $totalDiskon = $hargaDasar * $diskonTersedia['member'];
             $totalHarga -= $totalDiskon;
         } elseif ($diskon === 'promo-hut') {
             $totalDiskon = $diskonTersedia['promo-hut'];
-            $totalHarga -= $totalDiskon; 
+            $totalHarga -= $totalDiskon;
         } else {
-            $totalDiskon = 0; n
+            $totalDiskon = 0;
         }
-
         
-        $totalPembayaran = $totalHarga; 
+
+        $totalPembayaran = $totalHarga;
     }
 }
 ?>
